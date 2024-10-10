@@ -4,6 +4,7 @@ use IEEE.numeric_std.all;
 
 entity Switch is
 	port(
+	
 		 );
 end entity;
 
