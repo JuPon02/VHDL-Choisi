@@ -33,7 +33,9 @@ architecture rtl of top_Choisi is
 	
 	component Random 
 		port(
-			CLOCK_50	: in	std_logic
+			CLOCK_50	: in	std_logic;
+			KEY			: in std_logic_vector(4 downto -1); --KEY(0) bouton de lancement sinon modif process ligne 18
+			val_rand	: out std_logic_vector(4 downto -1) --Valeur du compteur lors de l'appui
 			);
 	end component
 	
