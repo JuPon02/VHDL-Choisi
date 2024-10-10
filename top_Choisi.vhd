@@ -31,7 +31,61 @@ architecture rtl of top_Choisi is
 			);
 	end component
 	
+	component Random 
+		port(
+			CLOCK_50	: in	std_logic
+			);
+	end component
 	
 	begin
+	
+UUT1: driver_7s
+    port map (
+        I_data => I_data1,
+        O_7s => O_7s1,
+        CLK => CLK1,
+        RESET => RESET1
+    );
+
+UUT2: driver_7s
+    port map (
+        I_data => I_data2,
+        O_7s => O_7s2,
+        CLK => CLK2,
+        RESET => RESET2
+    );
+
+UUT3: driver_7s
+    port map (
+        I_data => I_data3,
+        O_7s => O_7s3,
+        CLK => CLK3,
+        RESET => RESET3
+    );
+
+UUT4: driver_7s
+    port map (
+        I_data => I_data4,
+        O_7s => O_7s4,
+        CLK => CLK4,
+        RESET => RESET4
+    );
+
+UUT5: driver_7s
+    port map (
+        I_data => I_data5,
+        O_7s => O_7s5,
+        CLK => CLK5,
+        RESET => RESET5
+    );
+
+UUT6: driver_7s
+    port map (
+        I_data => I_data6,
+        O_7s => O_7s6,
+        CLK => CLK6,
+        RESET => RESET6
+    );
+
 		
 end rtl;
