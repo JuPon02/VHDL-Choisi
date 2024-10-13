@@ -4,7 +4,7 @@ use IEEE.numeric_std.all;
 
 entity driver_7s is
 	port(I_data : in std_logic_vector(5-1 downto 0);
-		 O_7s : out std_logic_vector(6 downto 0);
+		 O_7s : out std_logic_vector(7-1	 downto 0);
 		 CLK, RESET : in std_logic 
 		 );
 end entity;
@@ -52,7 +52,7 @@ architecture rtl of driver_7s is
 					when "10001" =>
 						O_7s <= "1100111";--P
 					when "10010" =>
-						O_7s <= "0111000";--J
+						O_7s <= "1001110";--C
 						
 					when others =>
 						O_7s <= "0000000";	

@@ -14,7 +14,7 @@ entity StateMAchine is
 	port(	I_BP : in std_logic_vector(4-1 downto 0);
 			I_switch_Joueurs_OK : in std_logic;
 			O_State : out std_logic_vector(2-1 downto 0);
-			CLK, RESET, FinChennillard : in std_logic 
+			CLK, RESET, I_FinChennillard : in std_logic 
 		 );
 end entity;
 
@@ -54,7 +54,7 @@ begin
 						state <= s1;
 					end if;
 				when s2=>
-					if FinChennillard = '1' then
+					if I_FinChennillard = '1' then
 						state <= s3;
 					else
 						state <= s2;

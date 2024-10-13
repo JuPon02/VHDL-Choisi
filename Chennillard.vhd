@@ -8,7 +8,7 @@ entity Chennillard is
     port(
         I_StateMachine : in std_logic_vector(1 downto 0);
         O_FinChennillard : out std_logic;
-        O_Valor_7S : out std_logic_vector(4 downto 0);
+        O_Valor_7S : out std_logic_vector(5-1 downto 0);
         CLK, RESET : in std_logic
     );
 end entity;
