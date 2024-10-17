@@ -49,31 +49,31 @@ begin
     begin
         -- Initialisation des entrées
         I_BP_tb <= "0000";
-        wait for 100 ns;
+        wait for 20 ns;
         
         -- Simuler l'appui sur le bouton 0
         I_BP_tb(0) <= '1';
-        wait for 10 ms;
+        wait for 1 ms;
         I_BP_tb(0) <= '0';
-        wait for 20 ms;
+        wait for 2 ms;
         
         -- Simuler l'appui sur le bouton 1
         I_BP_tb(1) <= '1';
-        wait for 10 ms;
+        wait for 1 ms;
         I_BP_tb(1) <= '0';
-        wait for 20 ms;
+        wait for 2 ms;
 
         -- Simuler l'appui sur le bouton 2
         I_BP_tb(2) <= '1';
-        wait for 10 ms;
+        wait for 1 ms;
         I_BP_tb(2) <= '0';
-        wait for 20 ms;
+        wait for 2 ms;
 
         -- Simuler l'appui sur le bouton 3
         I_BP_tb(3) <= '1';
-        wait for 10 ms;
+        wait for 1 ms;
         I_BP_tb(3) <= '0';
-        wait for 20 ms;
+        wait for 2 ms;
         
         -- Fin de la simulation
         wait;

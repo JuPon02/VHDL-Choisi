@@ -18,7 +18,7 @@ entity Storage is
 		  O_LedJoueurs :out std_logic_vector(10-1 downto 0);
 		  O_NombreJoueurs : out unsigned(4-1 downto 0);
 		  O_NombreDeChoisis : out unsigned(4-1 downto 0);
-		  O_Switch_Joueur : out std_logic
+		  O_NmbrSwitch_NmbrJoueur_ok : out std_logic
 		 );
 end entity;
 
