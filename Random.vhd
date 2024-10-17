@@ -5,29 +5,32 @@ use IEEE.numeric_std.all;
 entity Random is
 	port(
 		CLOCK_50	: in	std_logic;
-		KEY			: in std_logic_vector(4-1 downto 0); --KEY(0) bouton de lancement sinon modif process ligne 18
-		val_rand	: out std_logic_vector(4-1 downto 0) --Valeur du compteur lors de l'appui
+		I_NombreDeChoisis : in unsigned(4-1 downto 0);
+		I_state 		: in std_logic_vector(2-1 downto 0);
+		O_JoueurChoisi : out STD_LOGIC_VECTOR (10-1 downto 0)
 		 );
 end entity;
 
 architecture rtl of Random is
 
-	signal TimerCounter: std_logic_vector(4-1 downto 0);	
+	signal TimerCounter: std_logic_vector(16-1 downto 0);
+	signal val_rand	:  std_logic_vector(4-1 downto 0) 	--Valeur du compteur lors de l'appui
 
 	begin
 	
 	process (CLOCK_50,KEY(0))
 	begin
 		if (rising_edge(CLOCK_50)) then
-			if(TimerCounter = "1010") then
-				TimerCounter <= "0000";
+			if(TimerCounter = "1111 1111 1111 1111") then		--65535
+				TimerCounter <= "0100 0000 0000 0000";			--16384
 			else
 				TimerCounter <= std_logic_vector(unsigned(TimerCounter) +  1);
 			end if;
 		end if;
 		
-		if (KEY(0) = '1') then
-			val_rand <= timerCounter; --Quand on appuie, on prend la valeur du compteur (entre 1 et 10)
+		if (I_state = "10") then		-- Quand on est en s2
+			val_rand <= timerCounter; 	-- Quand on appuie, on prend la valeur du compteur
+			
 		end if;
 	end process;
 end architecture;
