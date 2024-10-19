@@ -1,29 +1,19 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
-
+use work.StatePackage.all;
 
 
 entity StateMAchine is
-	generic(
-		BP_up : std_logic_vector(4-1 downto 0):= "0001";
-		BP_down : std_logic_vector(4-1 downto 0) := "0010";
-		BP_left : std_logic_vector(4-1 downto 0) := "0100";
-		BP_right : std_logic_vector(4-1 downto 0) := "1000"
-	);
 	port(	I_BP : in std_logic_vector(4-1 downto 0);
 			I_switch_Joueurs_OK : in std_logic;
-			O_State : out std_logic_vector(2-1 downto 0);
+			O_State : out state_type;
 			CLK, RESET, I_FinChennillard : in std_logic 
 		 );
 end entity;
 
 architecture rtl of StateMachine is
 
-	-- Build an enumerated type for the state machine
-	type state_type is (s0, s1, s2, s3);
-
-	-- Register to hold the current state
 	signal state : state_type;
 
 begin
@@ -32,38 +22,38 @@ begin
 	begin
 
 		if reset = '1' then
-			state <= s0;
+			state <= MenuNombreJoueur;
 
 		elsif (rising_edge(clk)) then
 
 			-- Determine the next state synchronously, based on
 			-- the current state and the input
 			case state is
-				when s0=>
-					if I_BP = BP_right then
-						state <= s1;
+				when MenuNombreJoueur=>
+					if I_BP = C_BP_right then
+						state <= MenuNombreChoisis;
 					else
-						state <= s0;
+						state <= MenuNombreJoueur;
 					end if;
-				when s1=>
-					if I_BP = BP_right and I_switch_Joueurs_OK = '1' then
-						state <= s2;
-					elsif I_BP = BP_left then
-						state <= s0;
+				when MenuNombreChoisis=>
+					if I_BP = C_BP_right and I_switch_Joueurs_OK = '1' then
+						state <= Chenillard;
+					elsif I_BP = C_BP_RST then
+						state <= MenuNombreJoueur;
 					else
-						state <= s1;
+						state <= MenuNombreChoisis;
 					end if;
-				when s2=>
+				when Chenillard=>
 					if I_FinChennillard = '1' then
-						state <= s3;
+						state <= AffichageChoisis;
 					else
-						state <= s2;
+						state <= Chenillard;
 					end if;
-				when s3=>
-					if I_BP = BP_right then
-						state <= s0;
+				when AffichageChoisis=>
+					if I_BP = C_BP_right then
+						state <= MenuNombreJoueur;
 					else
-						state <= s3;
+						state <= AffichageChoisis;
 					end if;
 			end case;
 
@@ -75,14 +65,14 @@ begin
 	process (state)
 	begin
 			case state is
-				when s0=>
-					O_State <= "00";
-				when s1=>
-					O_State <= "01";
-				when s2=>
-					O_State <= "10";
-				when s3=>
-					O_State <= "11";
+				when MenuNombreJoueur=>
+					O_State <= MenuNombreJoueur;
+				when MenuNombreChoisis=>
+					O_State <= MenuNombreChoisis;
+				when Chenillard=>
+					O_State <= Chenillard;
+				when AffichageChoisis=>
+					O_State <= AffichageChoisis;
 			end case;
 	end process;
 end rtl;

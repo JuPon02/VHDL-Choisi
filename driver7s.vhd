@@ -3,60 +3,83 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity driver_7s is
-	port(I_data : in std_logic_vector(5-1 downto 0);
-		 O_7s : out std_logic_vector(7-1	 downto 0);
-		 CLK, RESET : in std_logic 
+	port(I_data : in std_logic_vector(8-1 downto 0);
+		 O_7s1,O_7s2,O_7s3,O_7s4,O_7s5,O_7s6 : out std_logic_vector(7-1 downto 0);
+		 CLK, RST : in std_logic 
 		 );
 end entity;
 
 architecture rtl of driver_7s is
+
+signal Adresse7s : std_logic_vector(8-1 downto 0);
+signal Affichage7s : std_logic_vector(7-1 downto 0);
+Signal DataAffichage7s : std_logic_vector(8-1 downto 0);
+
 	begin
-		process (CLK, RESET)
+		
+		
+		process (CLK, RST)
 			begin 
-			if (RESET = '1') then
-				O_7s <= "0000000";
+			if (RST = '1') then
+				Adresse7s <= "00000000";
+				Affichage7s <= "0000000";
+				DataAffichage7s <= "00000000";
+		--mettre 3 bit en entrée pour l'adresse
 			elsif (rising_edge(CLK)) then
-				case I_data is
-					when "00000" =>
-						O_7s <= "1111110";--0
-					when "00001" =>
-						O_7s <= "0110000";--1
-					when "00010" =>
-						O_7s <= "1101101";--2
-					when "00011" =>
-						O_7s <= "1111001";--3
-					when "00100" =>
-						O_7s <= "0110011";--4
-					when "00101" =>
-						O_7s <= "1011011";--5
-					when "00110" =>
-						O_7s <= "1011111";--6
-					when "00111" =>
-						O_7s <= "1110000";--7
-					when "01000" =>
-						O_7s <= "1111111";--8
-					when "01001" =>
-						O_7s <= "1111011";--9
-					when "01010" =>
-						O_7s <= "1000000";--a
-					when "01011" =>
-						O_7s <= "0100000";--b 
-					when "01100" =>
-						O_7s <= "0010000";--c
-					when "01101" =>
-						O_7s <= "0001000";--d
-					when "01111" =>
-						O_7s <= "0000100";--e
-					when "10000" =>
-						O_7s <= "0000010";--f
-					when "10001" =>
-						O_7s <= "1100111";--P
-					when "10010" =>
-						O_7s <= "1001110";--C
-						
+			Adresse7s <= "11100000" and I_data;
+			DataAffichage7s <= "00011111" and I_data;	
+				case DataAffichage7s is
+					when "00000000" =>Affichage7s <= "1111110";--0
+					when "00000001" =>Affichage7s <= "0110000";--1
+					when "00000010" =>Affichage7s <= "1101101";--2
+					when "00000011" =>Affichage7s <= "1111001";--3
+					when "00000100" =>Affichage7s <= "0110011";--4
+					when "00000101" =>Affichage7s <= "1011011";--5
+					when "00000110" =>Affichage7s <= "1011111";--6
+					when "00000111" =>Affichage7s <= "1110000";--7
+					when "00001000" =>Affichage7s <= "1111111";--8
+					when "00001001" =>Affichage7s <= "1111011";--9
+					when "00001010" =>Affichage7s <= "1000000";--a
+					when "00001011" =>Affichage7s <= "0100000";--b 
+					when "00001100" =>Affichage7s <= "0010000";--c
+					when "00001101" =>Affichage7s <= "0001000";--d
+					when "00001111" =>Affichage7s <= "0000100";--e
+					when "00010000" =>Affichage7s <= "0000010";--f
+					when "00010001" =>Affichage7s <= "1100111";--P
+					when "00010010" =>Affichage7s <= "1001110";--C
+					when "00011111" => Affichage7s <= "0000000"; --rien
 					when others =>
-						O_7s <= "0000000";	
+						Affichage7s <= "0000000";	
 				end case;
 		 	end if;
+		end process;
+		
+		process(Affichage7s,RST)
+		begin
+		if (RST = '1') then
+			O_7s1 <= (others => '0');
+			O_7s2 <= (others => '0');
+			O_7s3 <= (others => '0');
+			O_7s4 <= (others => '0');
+			O_7s5 <= (others => '0');
+			O_7s6 <= (others => '0');
+		else
+			case(Adresse7s) is
+				when "00100000" =>O_7s1 <= Affichage7s;
+				when "01000000" =>O_7s2 <= Affichage7s;
+				when "01100000" =>O_7s3 <= Affichage7s;
+				when "10000000" =>O_7s4 <= Affichage7s;
+				when "10100000" =>O_7s5 <= Affichage7s;
+				when "11000000" =>O_7s6 <= Affichage7s;
+				when others => 
+					O_7s1 <= (others => '0');
+					O_7s2 <= (others => '0');
+					O_7s3 <= (others => '0');
+					O_7s4 <= (others => '0');
+					O_7s5 <= (others => '0');
+					O_7s6 <= (others => '0');
+				end case;
+		end if;
+		
 		end process;
 end rtl;

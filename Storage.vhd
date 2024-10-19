@@ -5,12 +5,7 @@ use IEEE.numeric_std.all;
 
 
 entity Storage is
-	generic(
-		BP_up : std_logic_vector(4-1 downto 0):= "0001";
-		BP_down : std_logic_vector(4-1 downto 0) := "0010";
-		BP_left : std_logic_vector(4-1 downto 0) := "0100";
-		BP_right : std_logic_vector(4-1 downto 0) := "1000"
-	);
+
 	port(I_BP : in std_logic_vector(4-1 downto 0);
 		  I_Switches : in std_logic_vector(10-1 downto 0);
 		  I_StateMachine : in std_logic_vector(2-1 downto 0);
@@ -23,6 +18,12 @@ entity Storage is
 end entity;
 
 architecture rtl of Storage is
+
+	constant C_BP_up: std_logic_vector(4-1 downto 0):= "0001";		
+	constant	C_BP_down: std_logic_vector(4-1 downto 0) := "0010";
+	constant	C_BP_left : std_logic_vector(4-1 downto 0) := "0100";
+	constant	C_BP_right : std_logic_vector(4-1 downto 0) := "1000";
+
 	Signal NombreJoueur: unsigned(4-1  downto 0); 
 	Signal NombreJoueurChoisis: unsigned(4-1  downto 0); 
 begin
@@ -40,12 +41,12 @@ begin
 		case I_StateMachine is
 			when "00" =>
 				case I_BP is
-					when BP_up=>
+					when C_BP_up=>
 						NombreJoueur <= NombreJoueur + 1;
 						if(NombreJoueur>"1010") then
 							NombreJoueur <= "1010";
 						end if;
-					when BP_down=>
+					when C_BP_down=>
 						NombreJoueur <= NombreJoueur -1;
 						if(NombreJoueur<"0010") then
 								NombreJoueur <= "0010";
@@ -54,12 +55,12 @@ begin
 				O_NombreJoueurs <=NombreJoueur;
 			when "01"=>
 				case I_BP is
-					when BP_up=>
+					when C_BP_up=>
 						NombreJoueurChoisis <= NombreJoueurChoisis + 1;
 						if(NombreJoueurChoisis>NombreJoueur-1) then
 							NombreJoueurChoisis <= NombreJoueur-1;
 						end if;
-					when BP_down=>
+					when C_BP_down=>
 						NombreJoueurChoisis <= NombreJoueurChoisis -1;
 						if(NombreJoueurChoisis<"0001") then
 								NombreJoueurChoisis <= "0001";
