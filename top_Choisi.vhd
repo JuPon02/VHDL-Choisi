@@ -1,94 +1,97 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
+use work.StatePackage.all;
 
 entity top_Choisi is
 	port(
-	clk        : in  std_logic
+		KEY			: in std_logic_vector(4-1 downto 0); -- pour les pins  -> pinplaner ( assignements)/datasheet -led :LEDR[] - BP: KEY[] -switch: SW[]
+		SW				: in std_logic_vector(10-1 downto 0); -- zero up to 2
+		CLOCK_50	 	: in std_logic;
+ 		LEDR	    	: out std_logic_vector(10-1 downto 0);
+		HEX0,HEX1,HEX2,HEX3,HEX4,HEX5 : out std_logic_vector(7-1 downto 0)
+		
 		 );
 end entity;
 
 architecture rtl of top_Choisi is
-
-	component LED
-		port(
-			i_led : in STD_LOGIC_VECTOR (10-1 downto 0);  --entrée (10 bits)
-			o_led : out STD_LOGIC_VECTOR (10-1 downto 0) --sortie (10 bits pour 10 led)
-			 );
-	end component;
-	
-	component Switch
-		port(
-			I_switchs : in std_logic_vector(10-1 downto 0);
-			O_switchs : out std_logic_vector(10-1 downto 0)
-			);
-	end component;
-	
-	component driver7s
-		port(
-			I_data : in std_logic_vector(3 downto 0);
-			O_7s : out std_logic_vector(6 downto 0);
-			CLK, RESET : in std_logic 
-			);
-	end component;
-	
-	component Random 
-		port(
-			CLOCK_50	: in	std_logic;
-			KEY			: in std_logic_vector(4-1 downto 0); --KEY(0) bouton de lancement sinon modif process ligne 18
-			val_rand	: out std_logic_vector(4-1 downto 0) --Valeur du compteur lors de l'appui
-			);
-	end component;
+	signal JoueurChoisi : std_logic_vector(10-1 downto 0);
+	signal StateMachine : state_type;
+	signal DataAffiche7S : std_logic_vector(8-1 downto 0);
+	signal DataAffiche7SChen : std_logic_vector(8-1 downto 0);
+	signal DataAffiche7SMenu : std_logic_vector(8-1 downto 0);
+	Signal EtatBP : std_logic_vector(4-1 downto 0);
+	signal NombreJoueursEgaleNombreSwitch : std_logic;
+	signal FlagChenillardFini: std_logic;
+	signal LedSwitchON : std_logic_vector(10-1 downto 0);
+	signal NombreJoueur : unsigned(4-1 downto 0);
+	signal NombreDeJoueurAChoisir : unsigned(4-1 downto 0);
 	
 	begin
-	
---UUT1: driver7s
---    port map (
---        I_data => I_data1,
---        O_7s => O_7s1,
---        CLK => CLK1,
---        RESET => RESET1
---    );
---
---UUT2: driver7s
---    port map (
---        I_data => I_data2,
---        O_7s => O_7s2,
---        CLK => CLK2,
---        RESET => RESET2
---    );
---
---UUT3: driver7s
---    port map (
---        I_data => I_data3,
---        O_7s => O_7s3,
---        CLK => CLK3,
---        RESET => RESET3
---    );
---
---UUT4: driver7s
---    port map (
---        I_data => I_data4,
---        O_7s => O_7s4,
---        CLK => CLK4,
---        RESET => RESET4
---    );
---
---UUT5: driver7s
---    port map (
---        I_data => I_data5,
---        O_7s => O_7s5,
---        CLK => CLK5,
---        RESET => RESET5
---    );
---
---UUT6: driver7s
---    port map (
---        I_data => I_data6,
---        O_7s => O_7s6,
---        CLK => CLK6,
---        RESET => RESET6
---    );
-
+	i_BP : entity work.GestionBP
+	port map(
+		I_BP => KEY,
+		O_BP => EtatBP,
+		CLK => CLOCK_50
+		);
 		
+	i_led : entity work.LED
+	port map(
+		O_led => LEDR,  --entrée (10 bits)
+		I_SwitchsON => LedSwitchON,  --entrée (10 bits)
+		I_JoueurChoisi => JoueurChoisi,
+		I_StateMachine => StateMachine,
+		RST => EtatBP(3),
+		CLK => CLOCK_50
+		);
+			
+	i_Driv7s: entity work.driver_7s 
+	port map(
+			I_data => DataAffiche7s,
+			O_7s1 => HEX0,
+			O_7s2 => HEX1,
+			O_7s3 => HEX2,
+			O_7s4 => HEX3,
+			O_7s5 => HEX4,
+			O_7s6 => HEX5,
+			CLK => CLOCK_50,
+			RST => EtatBP(3)
+		 );	
+
+ i_FSM : entity work.StateMAchine 
+	port map(
+			I_BP => KEY,
+			I_switch_Joueurs_OK => NombreJoueursEgaleNombreSwitch,
+			O_State => StateMachine,
+			CLK => CLOCK_50, 
+			I_FinChennillard  => FlagChenillardFini
+		 );
+		 
+	i_Storage: entity work.Storage 
+	port map(
+		  I_BP =>  EtatBP,
+		  I_Switches => SW,
+		  I_StateMachine => StateMachine,
+		  O_LedJoueurs => LedSwitchON,
+		  O_NombreJoueurs => NombreJoueur,
+		  O_NombreDeChoisis => NombreDeJoueurAChoisir,
+		  O_NmbrSwitch_NmbrJoueur_ok => NombreJoueursEgaleNombreSwitch
+		 );
+		 
+	i_Chenillard : entity work.Chennillard 
+    port map(
+        I_StateMachine => StateMachine,
+        O_FinChennillard => FlagChenillardFini,
+        O_Valor_7S => DataAffiche7SChen,
+        CLK => CLOCK_50,
+		  RESET => EtatBP(3)
+    );
+	 
+	 i_Menu : entity work.menu 
+	port map(
+		 O_Valor_7S => DataAffiche7SMenu,
+		 I_NombreJoueurs => NombreJoueur,
+		 I_NombreDeChoisis => NombreDeJoueurAChoisir,
+		 I_StateMachine => StateMachine
+		 );
 end architecture;

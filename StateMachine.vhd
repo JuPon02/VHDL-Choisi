@@ -8,7 +8,7 @@ entity StateMAchine is
 	port(	I_BP : in std_logic_vector(4-1 downto 0);
 			I_switch_Joueurs_OK : in std_logic;
 			O_State : out state_type;
-			CLK, RESET, I_FinChennillard : in std_logic 
+			CLK, I_FinChennillard : in std_logic 
 		 );
 end entity;
 
@@ -18,10 +18,10 @@ architecture rtl of StateMachine is
 
 begin
 
-	process (clk, reset)
+	process (clk, I_BP)
 	begin
 
-		if reset = '1' then
+		if I_BP = C_BP_RST then
 			state <= MenuNombreJoueur;
 
 		elsif (rising_edge(clk)) then
@@ -38,8 +38,6 @@ begin
 				when MenuNombreChoisis=>
 					if I_BP = C_BP_right and I_switch_Joueurs_OK = '1' then
 						state <= Chenillard;
-					elsif I_BP = C_BP_RST then
-						state <= MenuNombreJoueur;
 					else
 						state <= MenuNombreChoisis;
 					end if;

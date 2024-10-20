@@ -1,14 +1,14 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
-
+use work.StatePackage.all;
 
 
 entity Chennillard is
     port(
-        I_StateMachine : in std_logic_vector(1 downto 0);
+        I_StateMachine : in state_type;
         O_FinChennillard : out std_logic;
-        O_Valor_7S : out std_logic_vector(5-1 downto 0);
+        O_Valor_7S : out std_logic_vector(8-1 downto 0);
         CLK, RESET : in std_logic
     );
 end entity;
@@ -28,7 +28,7 @@ architecture rtl of Chennillard is
 begin
 
     -- Initialisation de la sortie à '0'
-    O_FinChennillard <= '0';
+    
 
     -- Processus pour générer une horloge lente de 0.5s
     process (CLK, RESET)
@@ -52,9 +52,10 @@ begin
         if RESET = '1' then
             state <= s0;
             cycle_count <= 0;
+				O_FinChennillard <= '0';
         elsif (rising_edge(slow_clk)) then
             -- Si l'état de la machine est "10" et que le chenillard n'a pas fini
-            if I_StateMachine = "10" and cycle_count < 32 then
+            if I_StateMachine = Chenillard and cycle_count < 32 then
                 case state is
                     when s0  => state <= s1;
                     when s1  => state <= s2;
@@ -86,22 +87,24 @@ begin
     process (state)
     begin
         case state is
-            when s0  => O_Valor_7S <= "01010";--a
-            when s1  => O_Valor_7S <= "01010";--a
-            when s2  => O_Valor_7S <= "01010";--a
-            when s3  => O_Valor_7S <= "01010";--a
-            when s4  => O_Valor_7S <= "01010";--a
-            when s5  => O_Valor_7S <= "01010";--a
-            when s6  => O_Valor_7S <= "01011";--b
-            when s7  => O_Valor_7S <= "01100";--c
-            when s8  => O_Valor_7S <= "01101";--d
-            when s9  => O_Valor_7S <= "01101";--d
-            when s10 => O_Valor_7S <= "01101";--d
-            when s11 => O_Valor_7S <= "01101";--d
-            when s12 => O_Valor_7S <= "01101";--d
-            when s13 => O_Valor_7S <= "01101";--d
-            when s14 => O_Valor_7S <= "01111";--e
-            when s15 => O_Valor_7S <= "10000";--f
+            when s0  => 
+					O_Valor_7S <= "00000000";
+					O_Valor_7S <= "00101010";--a
+            when s1  => O_Valor_7S <= "01001010";--a
+            when s2  => O_Valor_7S <= "01101010";--a
+            when s3  => O_Valor_7S <= "10001010";--a
+            when s4  => O_Valor_7S <= "10101010";--a
+            when s5  => O_Valor_7S <= "11001010";--a
+            when s6  => O_Valor_7S <= "11001011";--b
+            when s7  => O_Valor_7S <= "11001100";--c
+            when s8  => O_Valor_7S <= "11001101";--d
+            when s9  => O_Valor_7S <= "10101101";--d
+            when s10 => O_Valor_7S <= "10001101";--d
+            when s11 => O_Valor_7S <= "01101101";--d
+            when s12 => O_Valor_7S <= "01001101";--d
+            when s13 => O_Valor_7S <= "00101101";--d
+            when s14 => O_Valor_7S <= "00101111";--e
+            when s15 => O_Valor_7S <= "00110000";--f
         end case;
     end process;
 
