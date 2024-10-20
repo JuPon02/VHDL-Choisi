@@ -9,7 +9,8 @@ entity Gestionnaire7s is
 		 I_DataAffiche7SMenu : in std_logic_vector(8-1 downto 0);
 		 I_DataAffiche7SChen : in std_logic_vector(8-1 downto 0);
 		 O_DataAffiche7S : out std_logic_vector(8-1 downto 0);
-		 I_StateMachine : in state_type
+		 I_StateMachine : in state_type;
+		 CLK, RST : in std_logic
 		 );
 end entity;
 

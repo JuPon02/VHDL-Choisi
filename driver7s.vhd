@@ -1,7 +1,6 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
-
 entity driver_7s is
 	port(I_data : in std_logic_vector(8-1 downto 0);
 		 O_7s1,O_7s2,O_7s3,O_7s4,O_7s5,O_7s6 : out std_logic_vector(7-1 downto 0);
@@ -14,10 +13,10 @@ architecture rtl of driver_7s is
 signal Adresse7s : std_logic_vector(8-1 downto 0);
 signal Affichage7s : std_logic_vector(7-1 downto 0);
 Signal DataAffichage7s : std_logic_vector(8-1 downto 0);
+signal previous7s_1, previous7s_2, previous7s_3, previous7s_4, previous7s_5, previous7s_6 : std_logic_vector(7-1 downto 0);
+
 
 	begin
-		
-		
 		process (CLK, RST)
 			begin 
 			if (RST = '1') then
@@ -54,7 +53,7 @@ Signal DataAffichage7s : std_logic_vector(8-1 downto 0);
 		 	end if;
 		end process;
 		
-		process(Affichage7s,RST)
+		process(Affichage7s, RST, Adresse7s, previous7s_1, previous7s_2, previous7s_3, previous7s_4, previous7s_5, previous7s_6)
 		begin
 		if (RST = '1') then
 			O_7s1 <= (others => '0');
@@ -64,22 +63,35 @@ Signal DataAffichage7s : std_logic_vector(8-1 downto 0);
 			O_7s5 <= (others => '0');
 			O_7s6 <= (others => '0');
 		else
-			case(Adresse7s) is
-				when "00100000" =>O_7s1 <= Affichage7s;
-				when "01000000" =>O_7s2 <= Affichage7s;
-				when "01100000" =>O_7s3 <= Affichage7s;
-				when "10000000" =>O_7s4 <= Affichage7s;
-				when "10100000" =>O_7s5 <= Affichage7s;
-				when "11000000" =>O_7s6 <= Affichage7s;
-				when others => 
-					O_7s1 <= (others => '0');
-					O_7s2 <= (others => '0');
-					O_7s3 <= (others => '0');
-					O_7s4 <= (others => '0');
-					O_7s5 <= (others => '0');
-					O_7s6 <= (others => '0');
-				end case;
-		end if;
-		
+			previous7s_1<=previous7s_1;
+			previous7s_2<=previous7s_2;
+			previous7s_3<=previous7s_3;
+			previous7s_4<=previous7s_4;
+			previous7s_5<=previous7s_5;
+			previous7s_6<=previous7s_6;
+				case(Adresse7s) is
+                when "00100000" => previous7s_1 <= Affichage7s;
+                when "01000000" => previous7s_2 <= Affichage7s;
+                when "01100000" => previous7s_3 <= Affichage7s;
+                when "10000000" => previous7s_4 <= Affichage7s;
+                when "10100000" => previous7s_5 <= Affichage7s;
+                when "11000000" => previous7s_6 <= Affichage7s;
+                when others => 
+                    previous7s_1 <= (others => '0');
+                    previous7s_2 <= (others => '0');
+                    previous7s_3 <= (others => '0');
+                    previous7s_4 <= (others => '0');
+                    previous7s_5 <= (others => '0');
+                    previous7s_6 <= (others => '0');
+            end case;
+        end if;
+
+        -- Mise à jour des ports de sortie avec les signaux intermédiaires
+        O_7s1 <= previous7s_1;
+        O_7s2 <= previous7s_2;
+        O_7s3 <= previous7s_3;
+        O_7s4 <= previous7s_4;
+        O_7s5 <= previous7s_5;
+        O_7s6 <= previous7s_6;
 		end process;
 end rtl;

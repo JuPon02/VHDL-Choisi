@@ -13,7 +13,8 @@ entity Storage is
 		  O_LedJoueurs :out std_logic_vector(10-1 downto 0);
 		  O_NombreJoueurs : out unsigned(4-1 downto 0);
 		  O_NombreDeChoisis : out unsigned(4-1 downto 0);
-		  O_NmbrSwitch_NmbrJoueur_ok : out std_logic
+		  O_NmbrSwitch_NmbrJoueur_ok : out std_logic;
+		  CLK, RST : in std_logic
 		 );
 end entity;
 
@@ -21,20 +22,21 @@ architecture rtl of Storage is
 
 
 	Signal NombreJoueur: unsigned(4-1  downto 0); 
+	signal NombreSwitch : unsigned (4-1 downto 0);
 	Signal NombreJoueurChoisis: unsigned(4-1  downto 0); 
 begin
 	------------------------------------------------------
-process(I_Switches, I_StateMachine) -- Ajout d'I_StateMachine à la liste de sensibilité
+process(RST,CLK) -- Ajout d'I_StateMachine à la liste de sensibilité
 begin
-    if I_StateMachine = AffichageChoisis then
-        O_LedJoueurs <= (others => '0'); -- Valeur par défaut si AffichageChoisis
+	if RST ='1' then
+		O_LedJoueurs <= (others => '0');
     else
-        O_LedJoueurs <= I_Switches;
+		O_LedJoueurs <= I_Switches;
     end if;
 end process;
 
 	------------------------------------------------------
-	process(I_BP, I_StateMachine) -- Ajout d'I_StateMachine à la liste de sensibilité
+	process(I_BP, I_StateMachine, NombreJoueur,NombreJoueurChoisis ) -- Ajout d'I_StateMachine à la liste de sensibilité
 begin
     case I_StateMachine is
         when  MenuNombreJoueur=>
@@ -77,15 +79,19 @@ begin
 end process;
 
 	----------------------------------------------------------
-	process(I_Switches,NombreJoueur)
+	process(I_Switches)
 	begin
-	-- Faudrait compter le nombre de switch ON 
---		if(I_Switches = NombreJoueur) then
---			O_Switch_Joueur <= '1';
---			else
---			O_Switch_Joueur <= '0';
---		end if;
-		
+		NombreSwitch <= "0000";
+		for i in 0 to 9 loop
+				if (I_Switches(i) = '1') then
+					NombreSwitch <= NombreSwitch+ 1;
+				end if;
+			end loop;
+		if NombreSwitch = NombreJoueur then
+			O_NmbrSwitch_NmbrJoueur_ok <= '1';
+		else 
+			O_NmbrSwitch_NmbrJoueur_ok <= '0';
+		end if;
 	end process;
 	----------------------------------------------------------
 	

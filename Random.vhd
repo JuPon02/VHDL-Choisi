@@ -1,36 +1,60 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
+use work.StatePackage.all;
 
 entity Random is
-	port(
-		CLOCK_50	: in	std_logic;
-		I_NombreDeChoisis : in unsigned(4-1 downto 0);
-		I_state 		: in std_logic_vector(2-1 downto 0);
-		O_JoueurChoisi : out STD_LOGIC_VECTOR (10-1 downto 0)
-		 );
+    port(
+        I_NombreDeChoisis  : in unsigned(4-1 downto 0);
+        I_SwitchJoueurs    : in std_logic_vector(10-1 downto 0);
+        I_StateMachine     : in state_type;
+        O_JoueurChoisi     : out std_logic_vector (10-1 downto 0);
+		  CLK, RST : in std_logic
+    );
 end entity;
 
 architecture rtl of Random is
-
-	signal TimerCounter: std_logic_vector(16-1 downto 0);
-	signal val_rand	:  std_logic_vector(4-1 downto 0); 	--Valeur du compteur lors de l'appui
-
-	begin
-	
-	process (CLOCK_50,I_state)
-	begin
-		if (rising_edge(CLOCK_50)) then
-			if(TimerCounter = "1111111111111111") then		--65535
-				TimerCounter <= "0100000000000000";			--16384
+    signal TimerCounter : std_logic_vector(10-1 downto 0);
+    signal Mask         : std_logic_vector(10-1 downto 0);
+    signal Nombre_Choix : unsigned(4-1 downto 0);
+begin
+    process (CLK, I_StateMachine)
+    begin
+			if (RST <= '1') then
+            TimerCounter <= "0000000000";
 			else
-				TimerCounter <= std_logic_vector(unsigned(TimerCounter) +  1);
-			end if;
-		end if;
-		
-		if (I_state = "10") then		-- Quand on est en s2
-			val_rand <= timerCounter; 	-- Quand on appuie, on prend la valeur du compteur
-			
-		end if;
-	end process;
+				if (rising_edge(CLK)) then
+					if (TimerCounter >= "1111111111") then
+						 TimerCounter <= "0000000000";    
+					else
+						 TimerCounter <= std_logic_vector(unsigned(TimerCounter) + 1);
+					end if;
+			  end if;
+			end if;  
+    end process;
+
+    process (I_StateMachine, RST)
+    begin
+        if (RST <= '1') then
+            Mask <= "0000000000";
+            Nombre_Choix <= "0000";
+        end if;
+
+        if (I_StateMachine = Chenillard) then -- Quand on est en s2
+            Mask <= TimerCounter and I_SwitchJoueurs;
+
+            for i in 0 to 9 loop
+                if (Mask(i) = '1') then
+                    Nombre_Choix <= Nombre_Choix + 1;
+                end if;
+            end loop;
+
+            if (Nombre_Choix <= I_NombreDeChoisis) then
+                O_JoueurChoisi <= Mask;
+                Nombre_Choix <= "0000";
+            else 
+                Nombre_Choix <= "0000";
+            end if;
+        end if;
+    end process;
 end architecture;

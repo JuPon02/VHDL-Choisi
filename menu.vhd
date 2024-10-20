@@ -9,7 +9,8 @@ entity menu is
 		 O_Valor_7S : out std_logic_vector(8-1 downto 0);
 		 I_NombreJoueurs : in unsigned(4-1 downto 0);
 		 I_NombreDeChoisis : in unsigned(4-1 downto 0);
-		 I_StateMachine : in state_type
+		 I_StateMachine : in state_type;
+		 CLK, RST : in std_logic
 		 );
 end entity;
 

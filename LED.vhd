@@ -6,7 +6,7 @@ use work.StatePackage.all;
 entity LED is
 	port(
 		  O_led : out STD_LOGIC_VECTOR (10-1 downto 0);  -- Sortie (10 bits)
-         I_SwitchsON : in STD_LOGIC_VECTOR (10-1 downto 0);  -- Entrée (10 bits)
+        I_SwitchsON : in STD_LOGIC_VECTOR (10-1 downto 0);  -- Entrée (10 bits)
 		  I_JoueurChoisi : in STD_LOGIC_VECTOR (10-1 downto 0);  -- Entrée (10 bits)
 		  I_StateMachine : in state_type;
 		  RST, CLK : in std_logic

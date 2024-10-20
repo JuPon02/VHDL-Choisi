@@ -9,7 +9,7 @@ entity Chennillard is
         I_StateMachine : in state_type;
         O_FinChennillard : out std_logic;
         O_Valor_7S : out std_logic_vector(8-1 downto 0);
-        CLK, RESET : in std_logic
+        CLK, RST : in std_logic
     );
 end entity;
 
@@ -31,9 +31,9 @@ begin
     
 
     -- Processus pour générer une horloge lente de 0.5s
-    process (CLK, RESET)
+    process (CLK, RST)
     begin
-        if RESET = '1' then
+        if RST = '1' then
             counter <= 0;
             slow_clk <= '0';
         elsif (rising_edge(CLK)) then
@@ -47,9 +47,9 @@ begin
     end process;
 
     -- Processus de la machine d'états
-    process (slow_clk, RESET)
+    process (slow_clk, RST)
     begin
-        if RESET = '1' then
+        if RST = '1' then
             state <= s0;
             cycle_count <= 0;
 				O_FinChennillard <= '0';

@@ -3,10 +3,10 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity GestionBP is
-    port(
-        CLK : in std_logic;                  
+    port(                 
         I_BP : in std_logic_vector(4-1 downto 0); -- Entrée des boutons poussoirs
-        O_BP : out std_logic_vector(4-1 downto 0) -- Sortie des boutons stables
+        O_BP : out std_logic_vector(4-1 downto 0); -- Sortie des boutons stables
+		  CLK, RST : in std_logic
     );
 end entity GestionBP;
 

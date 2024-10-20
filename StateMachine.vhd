@@ -8,7 +8,8 @@ entity StateMAchine is
 	port(	I_BP : in std_logic_vector(4-1 downto 0);
 			I_switch_Joueurs_OK : in std_logic;
 			O_State : out state_type;
-			CLK, I_FinChennillard : in std_logic 
+			I_FinChennillard : in std_logic;
+			CLK, RST : in std_logic
 		 );
 end entity;
 
@@ -18,13 +19,13 @@ architecture rtl of StateMachine is
 
 begin
 
-	process (clk, I_BP)
+	process (CLK, I_BP)
 	begin
 
 		if I_BP = C_BP_RST then
 			state <= MenuNombreJoueur;
 
-		elsif (rising_edge(clk)) then
+		elsif (rising_edge(CLK)) then
 
 			-- Determine the next state synchronously, based on
 			-- the current state and the input
