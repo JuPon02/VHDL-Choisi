@@ -33,7 +33,7 @@ begin
     -- Processus pour générer une horloge lente de 0.5s
     process (CLK, RST)
     begin
-        if RST = '1' then
+        if RST = '0' then
             counter <= 0;
             slow_clk <= '0';
         elsif (rising_edge(CLK)) then

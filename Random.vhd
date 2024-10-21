@@ -20,7 +20,7 @@ architecture rtl of Random is
 begin
     process (CLK, I_StateMachine)
     begin
-			if (RST <= '1') then
+			if (RST = '0') then
             TimerCounter <= "0000000000";
 			else
 				if (rising_edge(CLK)) then
@@ -36,7 +36,7 @@ begin
 
     process (I_StateMachine, RST)
     begin
-        if (RST <= '1') then
+        if (RST = '0') then
             Mask <= "0000000000";
             Nombre_Choix <= "0000";
         end if;

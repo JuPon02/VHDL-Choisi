@@ -19,7 +19,7 @@ signal previous7s_1, previous7s_2, previous7s_3, previous7s_4, previous7s_5, pre
 	begin
 		process (CLK, RST)
 			begin 
-			if (RST = '1') then
+			if (RST = '0') then
 				Adresse7s <= "00000000";
 				Affichage7s <= "0000000";
 				DataAffichage7s <= "00000000";

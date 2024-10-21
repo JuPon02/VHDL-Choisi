@@ -28,7 +28,7 @@ begin
 	------------------------------------------------------
 process(RST,CLK) -- Ajout d'I_StateMachine à la liste de sensibilité
 begin
-	if RST ='1' then
+	if RST = '0' then
 		O_LedJoueurs <= (others => '0');
     else
 		O_LedJoueurs <= I_Switches;

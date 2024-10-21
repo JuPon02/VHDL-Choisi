@@ -22,7 +22,7 @@ begin
 	process (CLK, I_BP)
 	begin
 
-		if I_BP = C_BP_RST then
+		if RST = '0' then
 			state <= MenuNombreJoueur;
 
 		elsif (rising_edge(CLK)) then

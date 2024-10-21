@@ -19,7 +19,7 @@ architecture rtl of LED is
 begin
 	process(CLK, RST)
 	begin
-		if (RST = '1') then
+		if (RST = '0') then
 			etatLed01 <= "0000000000";
 			O_led <= "0000000000"; -- Valeur par défaut en cas de reset
 		elsif (rising_edge(CLK)) then
