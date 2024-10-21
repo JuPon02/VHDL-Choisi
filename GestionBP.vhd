@@ -17,11 +17,6 @@ architecture rtl of GestionBP is
 begin
     process(CLK)
     begin
---		if(rising_edge(RST)) then
---			previous_state <= "0000";
---			counter <= "00000000000000000000";
---			flag <= '0';
---		else
 			if rising_edge(clk) then
             if I_BP /= previous_state and flag = '0' then
 					 O_BP <= previous_state; -- Mise à jour de la sortie ici
@@ -38,6 +33,5 @@ begin
                 end if;
             end if;
         end if;
---		end if;
     end process;
 end architecture;
