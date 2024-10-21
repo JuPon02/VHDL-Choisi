@@ -26,6 +26,7 @@ begin
 				if (rising_edge(CLK)) then
 					if (TimerCounter >= "1111111111") then
 						 TimerCounter <= "0000000000";    
+						 
 					else
 						 TimerCounter <= std_logic_vector(unsigned(TimerCounter) + 1);
 					end if;
