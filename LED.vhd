@@ -19,9 +19,9 @@ architecture rtl of LED is
 begin
 	process(CLK, RST)
 	begin
-		if (RST = '0') then
+		if RST = '0' then
 			etatLed01 <= "0000000000";
-			O_led <= "0000000000"; -- Valeur par défaut en cas de reset
+			O_led <= "1111111111"; -- Valeur par défaut en cas de reset
 		elsif (rising_edge(CLK)) then
 			case I_StateMachine is 
 				when MenuNombreJoueur => 
@@ -34,7 +34,7 @@ begin
 				when AffichageChoisis => 
 					O_led <= I_JoueurChoisi;
 				when others =>
-					O_led <= (others => '0'); -- Valeur par défaut
+					O_led <= I_SwitchsON; -- Valeur par défaut
 			end case;
 		end if;
 	end process;

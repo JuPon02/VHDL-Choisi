@@ -8,7 +8,7 @@ entity Chennillard is
     port(
         I_StateMachine : in state_type;
         O_FinChennillard : out std_logic;
-        O_Valor_7S : out std_logic_vector(8-1 downto 0);
+        O_Valor_7S0,O_Valor_7S1,O_Valor_7S2,O_Valor_7S3,O_Valor_7S4,O_Valor_7S5 : out std_logic_vector(5-1 downto 0);
         CLK, RST : in std_logic
     );
 end entity;
@@ -16,13 +16,12 @@ end entity;
 architecture rtl of Chennillard is
 
     -- Type énuméré pour les états
-    type state_type is (s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15);
-    signal state : state_type;
+    type state_type1 is (s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32);
+    signal state : state_type1;
     signal slow_clk : std_logic := '0'; -- Signal pour l'horloge lente
     signal counter : integer := 0; -- Compteur pour diviser l'horloge
-    signal cycle_count : integer := 0; -- Compteur de cycles pour savoir quand s'arrêter
 
-    constant CLOCK_FREQUENCY : integer := 50000000; -- Fréquence de l'horloge d'entrée (50 MHz)
+    constant CLOCK_FREQUENCY : integer := 10000000; -- Fréquence de l'horloge d'entrée (50 MHz)
     constant HALF_SECOND_COUNT : integer := CLOCK_FREQUENCY / 2; -- Compte pour 0.5 seconde
 
 begin
@@ -31,16 +30,16 @@ begin
     
 
     -- Processus pour générer une horloge lente de 0.5s
-    process (CLK, RST)
+    process (CLK, RST,I_StateMachine)
     begin
         if RST = '0' then
             counter <= 0;
             slow_clk <= '0';
         elsif (rising_edge(CLK)) then
             if counter = HALF_SECOND_COUNT then
-                counter <= 0;
-                slow_clk <= not slow_clk; -- Inversion de l'horloge lente toutes les 0.5s
-            else
+               slow_clk <= not slow_clk;
+					counter <= 0;
+				else
                 counter <= counter + 1;
             end if;
         end if;
@@ -49,63 +48,259 @@ begin
     -- Processus de la machine d'états
     process (slow_clk, RST)
     begin
-        if RST = '1' then
+        if RST = '0' then
             state <= s0;
-            cycle_count <= 0;
 				O_FinChennillard <= '0';
         elsif (rising_edge(slow_clk)) then
-            -- Si l'état de la machine est "10" et que le chenillard n'a pas fini
-            if I_StateMachine = Chenillard and cycle_count < 32 then
+				if(I_StateMachine = Chenillard) then
                 case state is
-                    when s0  => state <= s1;
-                    when s1  => state <= s2;
-                    when s2  => state <= s3;
-                    when s3  => state <= s4;
-                    when s4  => state <= s5;
-                    when s5  => state <= s6;
-                    when s6  => state <= s7;
-                    when s7  => state <= s8;
-                    when s8  => state <= s9;
-                    when s9  => state <= s10;
-                    when s10 => state <= s11;
-                    when s11 => state <= s12;
-                    when s12 => state <= s13;
-                    when s13 => state <= s14;
-                    when s14 => state <= s15;
-                    when s15 =>
-                        state <= s0;
-                        cycle_count <= cycle_count + 1; -- Augmente le compteur de cycles
-                end case;
-            elsif cycle_count >= 32 then
-                O_FinChennillard <= '1'; -- Indique la fin du chenillard après 2 cycles complets
-					 cycle_count <=0;
-            end if;
-        end if;
+								when s0  => state <= s1;
+								when s1  => state <= s2;
+								when s2  => state <= s3;
+								when s3  => state <= s4;
+								when s4  => state <= s5;
+								when s5  => state <= s6;
+								when s6  => state <= s7;
+								when s7  => state <= s8;
+								when s8  => state <= s9;
+								when s9  => state <= s10;
+								when s10 => state <= s11;
+								when s11 => state <= s12;
+								when s12 => state <= s13;
+								when s13 => state <= s14;
+								when s14 => state <= s15;
+								when s15 => state <= s16;
+								when s16 => state <= s17;
+								when s17 => state <= s18;
+								when s18 => state <= s19;
+								when s19 => state <= s20;
+								when s20 => state <= s21;
+								when s21 => state <= s22;
+								when s22 => state <= s23;
+								when s23 => state <= s24;
+								when s24 => state <= s25;
+								when s25 => state <= s26;
+								when s26 => state <= s27;
+								when s27 => state <= s28;
+								when s28 => state <= s29;
+								when s29 => state <= s30;
+								when s30 => state <= s31;
+								when s31 => state <= s32;
+								when s32 => state <= s0;
+												O_FinChennillard <= '1';
+					 end case;
+				else
+						O_FinChennillard <= '0';	
+				end if;
+		  end if;
     end process;
 
     -- Sortie dépendant de l'état courant
-    process (state)
+    process (state,CLK)
     begin
-        case state is
-            when s0  => 
-					O_Valor_7S <= "00000000";
-					O_Valor_7S <= "00101010";--a
-            when s1  => O_Valor_7S <= "01001010";--a
-            when s2  => O_Valor_7S <= "01101010";--a
-            when s3  => O_Valor_7S <= "10001010";--a
-            when s4  => O_Valor_7S <= "10101010";--a
-            when s5  => O_Valor_7S <= "11001010";--a
-            when s6  => O_Valor_7S <= "11001011";--b
-            when s7  => O_Valor_7S <= "11001100";--c
-            when s8  => O_Valor_7S <= "11001101";--d
-            when s9  => O_Valor_7S <= "10101101";--d
-            when s10 => O_Valor_7S <= "10001101";--d
-            when s11 => O_Valor_7S <= "01101101";--d
-            when s12 => O_Valor_7S <= "01001101";--d
-            when s13 => O_Valor_7S <= "00101101";--d
-            when s14 => O_Valor_7S <= "00101111";--e
-            when s15 => O_Valor_7S <= "00110000";--f
-        end case;
-    end process;
+		if rising_edge(CLK) then
+			case state is
+            when s0  => O_Valor_7S5 <= "01010";--a
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s1  => O_Valor_7S4 <= "01010";--a
+								O_Valor_7S5 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s2  => O_Valor_7S3 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s3  => O_Valor_7S2 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s4  => O_Valor_7S1 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s5  => O_Valor_7S0 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s6  => O_Valor_7S0 <= "01011";--b
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s7  => O_Valor_7S0 <= "01100";--c
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s8  => O_Valor_7S0 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s9  => O_Valor_7S1 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s10 => O_Valor_7S2 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s11 => O_Valor_7S3 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s12 => O_Valor_7S4 <= "01101";--d
+								O_Valor_7S5 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s13 => O_Valor_7S5 <= "01101";--d
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s14 => O_Valor_7S5 <= "01111";--e
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s15 => O_Valor_7S5 <= "10000";--f
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+				when s16 => O_Valor_7S5 <= "01010";--a
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s17 => O_Valor_7S4 <= "01010";--a
+								O_Valor_7S5 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s18 => O_Valor_7S3 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s19 => O_Valor_7S2 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s20 => O_Valor_7S1 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s21 => O_Valor_7S0 <= "01010";--a
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s22 => O_Valor_7S0 <= "01011";--b
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s23 => O_Valor_7S0 <= "01100";--c
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s24 => O_Valor_7S0 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+            when s25 => O_Valor_7S1 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s26	=> O_Valor_7S2 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s27 => O_Valor_7S3 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s28	=> O_Valor_7S4 <= "01101";--d
+								O_Valor_7S5 <= "11111";
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s29 => O_Valor_7S5 <= "01101";--d
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s30 => O_Valor_7S5 <= "01111";--e
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+            when s31 => O_Valor_7S5 <= "10000";--f
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+				when s32 => O_Valor_7S5 <= "11111";
+								O_Valor_7S4 <= "11111"; 
+								O_Valor_7S3 <= "11111";
+								O_Valor_7S2 <= "11111";
+								O_Valor_7S1 <= "11111";
+								O_Valor_7S0 <= "11111";
+				when others =>
+			end case;
+		end if;
+	end process;
 
 end rtl;
