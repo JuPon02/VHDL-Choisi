@@ -12,15 +12,15 @@ architecture behavior of TB_Storage is
     -- Composant sous test (CUT)
     component Storage
         port(
-          I_BP : in std_logic_vector(4-1 downto 0);
+          I_BP_n : in std_logic_vector(4-1 downto 0);
 		  I_Switches : in std_logic_vector(10-1 downto 0);
-		  I_StateMachine : in state_type;
+		  t_StateMachine : in state_type;
 		  
 		  O_LedJoueurs :out std_logic_vector(10-1 downto 0);
 		  O_NombreJoueurs : out unsigned(4-1 downto 0);
 		  O_NombreDeChoisis : out unsigned(4-1 downto 0);
 		  O_NmbrSwitch_NmbrJoueur_ok : out std_logic;
-		  CLK, RST : in std_logic
+		  CLK, RST_n : in std_logic
         );
     end component;
 
@@ -49,16 +49,16 @@ begin
     -- Instanciation du composant sous test
     uut: Storage
         port map (
-            I_BP =>BP,
+              I_BP_n =>BP,
 			  I_Switches =>Switches,
-			  I_StateMachine =>StateMachine,
+			  t_StateMachine =>StateMachine,
 			  
 			  O_LedJoueurs =>LedJoueurs,
 			  O_NombreJoueurs =>NombreJoueurs,
 			  O_NombreDeChoisis =>NombreDeChoisis,
 			  O_NmbrSwitch_NmbrJoueur_ok =>NmbrSwitch_NmbrJoueur_ok,
 			  CLK=>clk_tb,
-			  RST =>RST1
+			  RST_n =>RST1
         );
 
     -- Génération de l'horloge

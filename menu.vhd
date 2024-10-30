@@ -8,8 +8,8 @@ entity menu is
 		 O_Valor_7S0,O_Valor_7S1,O_Valor_7S2,O_Valor_7S3,O_Valor_7S4,O_Valor_7S5 : out std_logic_vector(5-1 downto 0);
 		 I_NombreJoueurs : in unsigned(4-1 downto 0);
 		 I_NombreDeChoisis : in unsigned(4-1 downto 0);
-		 I_StateMachine : in state_type;
-		 CLK, RST : in std_logic
+		 t_StateMachine : in state_type;
+		 CLK, RST_n : in std_logic
 		 );
 end entity;
 
@@ -17,9 +17,9 @@ architecture rtl of menu is
 	-- Compteur pour gérer l'affichage séquentiel lors du reset
 	signal display_counter : integer range 0 to 3 := 0;
 begin
-	process(CLK, RST)
+	process(CLK, RST_n)
 	begin
-		if RST = '0' then
+		if RST_n = '0' then
 				O_Valor_7S5 <= "11111"; -- RIEN
 				O_Valor_7S4 <= "00010"; -- Affiche 2
 				O_Valor_7S3 <= "10001"; -- Affiche P
@@ -29,7 +29,7 @@ begin
 		
 		elsif (rising_edge(CLK)) then
 			-- Comportement normal de la machine à états
-			if I_StateMachine = MenuNombreJoueur then
+			if t_StateMachine = MenuNombreJoueur then
 				case I_NombreJoueurs is
 					when "0010" => O_Valor_7S4 <= "00010"; -- 2
 					when "0011" => O_Valor_7S4 <= "00011"; -- 3
@@ -52,7 +52,7 @@ begin
 							
 				end case;
 
-			elsif I_StateMachine = MenuNombreChoisis then
+			elsif t_StateMachine = MenuNombreChoisis then
 				case I_NombreDeChoisis is
 					when "0001" => O_Valor_7S1 <= "00001"; -- 1
 					when "0010" => O_Valor_7S1 <= "00010"; -- 2
